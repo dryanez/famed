@@ -6,6 +6,7 @@ import path from 'path'
 export default defineConfig({
   plugins: [react()],
   base: '/', // This ensures proper routing for custom domain
+  publicDir: 'public', // Ensure CNAME file gets copied
   server: {
     allowedHosts: true
   },
