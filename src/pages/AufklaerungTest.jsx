@@ -12,7 +12,7 @@ import XPReward from "../components/gamification/XPReward";
 import { calculateLevelInfo } from "../components/gamification/GamificationProfile";
 import { API_KEYS } from "@/components/config/apiKeys";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getAufklaerungDetails } from "../components/aufklaerung/data.js";
+import { getAufklaerungDetails } from "../components/aufklaerung/data.jsx";
 
 const PREP_TIME = 10;
 const RECORD_TIME = 120; // 2 minutes

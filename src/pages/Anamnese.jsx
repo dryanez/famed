@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Mic, User, Bot, Loader2, ArrowLeft, Book, Clock, Sparkles } from 'lucide-react';
 import { Textarea } from "@/components/ui/textarea";
-import { patientCases, basePrompt } from '../components/anamnese/patientData.js';
+import { patientCases, basePrompt } from '../components/anamnese/patientData.jsx';
 import { InvokeLLM } from '@/api/integrations';
 import { API_KEYS } from "@/components/config/apiKeys";
 import { motion, AnimatePresence } from 'framer-motion';
