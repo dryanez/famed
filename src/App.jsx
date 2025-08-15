@@ -1,16 +1,10 @@
 import './App.css'
-import Pages from "@/pages/index.jsx"
-import { Toaster } from "@/components/ui/toaster"
-import { AuthProvider } from "./contexts/AuthContext"
 
 function App() {
   return (
-    <div>
-      <h1>FAMED Test - Loading...</h1>
-      <AuthProvider>
-        <Pages />
-        <Toaster />
-      </AuthProvider>
+    <div style={{padding: '20px', fontSize: '24px', color: 'red'}}>
+      <h1>FAMED Test App is Working!</h1>
+      <p>If you can see this, React is rendering correctly.</p>
     </div>
   )
 }
