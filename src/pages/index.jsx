@@ -2,6 +2,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Layout from "./Layout"
+import Home from "./Home";
 import Dashboard from "./Dashboard";
 import Practice from "./Practice";
 import Progress from "./Progress";
@@ -25,10 +26,6 @@ import Upgrade from "./Upgrade";
 import Redeem from "./Redeem";
 import AdminPanel from "./AdminPanel";
 import PaymentSuccess from "./PaymentSuccess";
-import Home from "./Home";
-import FloatingAssistant from "../components/assistant/FloatingAssistant"
-
-// Added import for the new component
 
 export default function Pages() {
   return (
@@ -60,7 +57,6 @@ export default function Pages() {
           <Route path="/redeem" element={<Redeem />} />
           <Route path="/adminpanel" element={<AdminPanel />} />
           <Route path="/paymentsuccess" element={<PaymentSuccess />} />
-          <Route path="/assistant" element={<Assistant />} />
         </Routes>
       </Layout>
     </Router>
