@@ -1,11 +1,25 @@
 import './App.css'
+import { Toaster } from "@/components/ui/toaster"
+import { AuthProvider } from "./contexts/AuthContext"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
+
+import Home from "./pages/Home"
+import Dashboard from "./pages/Dashboard"
+// Test Flashcards component
+import Flashcards from "./pages/Flashcards"
 
 function App() {
   return (
-    <div style={{padding: '20px', fontSize: '24px', color: 'red'}}>
-      <h1>FAMED Test App is Working!</h1>
-      <p>If you can see this, React is rendering correctly.</p>
-    </div>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/flashcards" element={<Flashcards />} />
+        </Routes>
+      </Router>
+      <Toaster />
+    </AuthProvider>
   )
 }
 

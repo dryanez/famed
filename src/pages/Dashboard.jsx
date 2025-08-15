@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 import { User, SpeechAssessment, Flashcard, Assignment, Submission } from "@/api/entities";
 import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -48,6 +49,7 @@ const guestData = {
 };
 
 export default function Dashboard() {
+  const { user: authUser, isAuthenticated, logout } = useAuth();
   const [user, setUser] = useState(null);
   const [assessments, setAssessments] = useState([]);
   const [flashcards, setFlashcards] = useState([]);
@@ -57,33 +59,31 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [authUser]);
 
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const currentUser = await User.me();
-      setUser(currentUser);
-      
-      // Load user-specific data only for authenticated users
-      const [assessmentData, flashcardData, assignmentData, submissionData] = await Promise.all([
-        SpeechAssessment.filter({ created_by: currentUser.email }, "-created_date", 10),
-        Flashcard.filter({ created_by: currentUser.email }, "-created_date", 5),
-        currentUser.class_id ? Assignment.filter({ class_id: currentUser.class_id }) : Promise.resolve([]),
-        currentUser.class_id ? Submission.filter({ student_email: currentUser.email }) : Promise.resolve([])
-      ]);
-      setAssessments(assessmentData);
-      setFlashcards(flashcardData);
-      setAssignments(assignmentData);
-      setSubmissions(submissionData);
+      if (isAuthenticated && authUser) {
+        // Use our custom auth user instead of Base44
+        setUser(authUser);
+        
+        // Load user-specific data - using demo data for now
+        // You can replace this with real API calls later
+        setAssessments(guestData.assessments);
+        setFlashcards(guestData.flashcards);
+        setAssignments([]);
+        setSubmissions([]);
+      } else {
+        setUser(null);
+      }
     } catch (error) {
-      // Expected behavior for guest users - no error logging needed
       setUser(null);
     }
     setIsLoading(false);
   };
 
-  const isGuest = user === null;
+  const isGuest = !isAuthenticated || user === null;
 
   const getAverageScore = () => {
     if (assessments.length === 0) return 0;
@@ -150,6 +150,21 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-transparent p-6">
       <div className="max-w-7xl mx-auto">
+        {/* Simple Navigation Links */}
+        <div className="mb-6 p-4 bg-white rounded-lg shadow">
+          <div className="flex flex-wrap gap-4">
+            <Link to="/dashboard" className="text-blue-600 hover:underline font-semibold">Dashboard</Link>
+            <Link to="/flashcards" className="text-blue-600 hover:underline">Flashcards</Link>
+            <span className="text-gray-400">Practice (Coming Soon)</span>
+            <button 
+              onClick={() => {logout(); window.location.href = '/';}} 
+              className="text-red-600 hover:underline ml-auto"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+        
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
