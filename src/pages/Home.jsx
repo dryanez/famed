@@ -11,13 +11,8 @@ export default function HomePage() {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const user = await User.me();
-                if (user) {
-                    // Redirect authenticated users to dashboard
-                    navigate(createPageUrl('Dashboard'), { replace: true });
-                } else {
-                    setAuthStatus('unauthenticated');
-                }
+                // Skip API call for local development - show hero page directly
+                setAuthStatus('unauthenticated');
             } catch (error) {
                 setAuthStatus('unauthenticated');
             }

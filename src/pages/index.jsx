@@ -26,6 +26,7 @@ import Redeem from "./Redeem";
 import AdminPanel from "./AdminPanel";
 import PaymentSuccess from "./PaymentSuccess";
 import Home from "./Home";
+import Assistant from "./Assistant";
 import FloatingAssistant from "../components/assistant/FloatingAssistant"
 
 // Added import for the new component

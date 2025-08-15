@@ -20,7 +20,8 @@ import {
 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useNavigate, Link } from "react-router-dom";
-import { createPageUrl, getEffectiveAccountType } from "@/utils"; // Added getEffectiveAccountType
+import { createPageUrl } from "@/utils";
+import { getEffectiveAccountType } from "../components/utils/subscriptionLimits";
 import { calculateLevelInfo, rankTitles } from "../components/gamification/GamificationProfile";
 import XPReward from "../components/gamification/XPReward";
 

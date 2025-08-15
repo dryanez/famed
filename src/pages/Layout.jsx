@@ -40,9 +40,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import GamificationProfile from './components/gamification/GamificationProfile';
+import GamificationProfile from '../components/gamification/GamificationProfile';
 import { getEffectiveAccountType, getDaysRemaining, PLAN_NAMES } from "@/components/utils/subscriptionLimits";
-import FloatingAssistant from './components/assistant/FloatingAssistant';
+import FloatingAssistant from '../components/assistant/FloatingAssistant';
 
 // SEO Helper
 const updateMetaTags = (tags) => {
@@ -311,32 +311,10 @@ export default function Layout({ children, currentPageName }) {
     const loadUser = async () => {
       setIsUserLoading(true);
       try {
-        const currentUser = await User.me();
-        setUser(currentUser);
-        
-        // REMOVED: No more auto-redirect to dashboard
-        // Users can manually navigate to dashboard if they want
-        
-        if (currentUser && !currentUser.profile_complete) {
-          setShowProfileModal(true);
-        }
-        if (currentUser && currentUser.class_id) {
-            try {
-                const userClass = await Class.get(currentUser.class_id);
-                setUserClassName(userClass.class_name);
-            } catch (e) {
-                console.error("Could not fetch class name for user", e);
-            }
-        }
-        
-        const useDarkMode = currentUser?.dark_mode !== false;
-        if (useDarkMode) {
-          document.documentElement.classList.add('dark');
-          localStorage.setItem('theme', 'dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-          localStorage.setItem('theme', 'light');
-        }
+        // Skip API call for local development
+        setUser(null);
+        setUserClassName(null);
+        document.documentElement.classList.add('dark');
       } catch (error) {
         // User not authenticated - clear any stale data
         setUser(null);
