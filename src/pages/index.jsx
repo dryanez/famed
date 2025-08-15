@@ -26,7 +26,9 @@ import Redeem from "./Redeem";
 import AdminPanel from "./AdminPanel";
 import PaymentSuccess from "./PaymentSuccess";
 import Home from "./Home";
-import Assistant from "./Assistant"; // Added import for the new component
+import FloatingAssistant from "../components/assistant/FloatingAssistant"
+
+// Added import for the new component
 
 export default function Pages() {
   return (
