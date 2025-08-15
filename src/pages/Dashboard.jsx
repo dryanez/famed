@@ -150,21 +150,6 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-transparent p-6">
       <div className="max-w-7xl mx-auto">
-        {/* Simple Navigation Links */}
-        <div className="mb-6 p-4 bg-white rounded-lg shadow">
-          <div className="flex flex-wrap gap-4">
-            <Link to="/dashboard" className="text-blue-600 hover:underline font-semibold">Dashboard</Link>
-            <Link to="/flashcards" className="text-blue-600 hover:underline">Flashcards</Link>
-            <span className="text-gray-400">Practice (Coming Soon)</span>
-            <button 
-              onClick={() => {logout(); window.location.href = '/';}} 
-              className="text-red-600 hover:underline ml-auto"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-        
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
