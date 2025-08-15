@@ -5,6 +5,7 @@ import path from 'path'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  base: '/', // This ensures proper routing for custom domain
   server: {
     allowedHosts: true
   },
