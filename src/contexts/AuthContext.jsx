@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { dataManager } from '../lib/dataManager.js';
 
 const AuthContext = createContext();
 
@@ -18,7 +19,10 @@ export const AuthProvider = ({ children }) => {
     // Check if user is logged in (from localStorage)
     const savedUser = localStorage.getItem('famedUser');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      const userData = JSON.parse(savedUser);
+      setUser(userData);
+      // Also set in dataManager for API consistency
+      localStorage.setItem('currentUser', JSON.stringify(userData));
     }
     setLoading(false);
   }, []);
@@ -31,11 +35,16 @@ export const AuthProvider = ({ children }) => {
         email,
         name: email.split('@')[0],
         accountType: 'premium', // Default to premium for now
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        xp: 0,
+        level: 1,
+        title: 'Anfänger'
       };
       
       setUser(userData);
       localStorage.setItem('famedUser', JSON.stringify(userData));
+      // Also store for dataManager API compatibility
+      localStorage.setItem('currentUser', JSON.stringify(userData));
       return { success: true, user: userData };
     }
     return { success: false, error: 'Invalid credentials' };
@@ -49,11 +58,16 @@ export const AuthProvider = ({ children }) => {
         email,
         name,
         accountType: 'premium',
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        xp: 0,
+        level: 1,
+        title: 'Anfänger'
       };
       
       setUser(userData);
       localStorage.setItem('famedUser', JSON.stringify(userData));
+      // Also store for dataManager API compatibility
+      localStorage.setItem('currentUser', JSON.stringify(userData));
       return { success: true, user: userData };
     }
     return { success: false, error: 'All fields are required' };
@@ -62,6 +76,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('famedUser');
+    localStorage.removeItem('currentUser');
   };
 
   const value = {

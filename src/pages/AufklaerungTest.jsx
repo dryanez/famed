@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, useRef } from "react";
-import { InformedConsentCase, SpeechAssessment, User } from "@/api/entities";
-import { InvokeLLM, UploadFile } from "@/api/integrations";
+import { useAuth } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,6 @@ import { ArrowLeft, Loader2, Video, Square, AlertTriangle, MessageSquare, VideoO
 import CaseTestResults from "../components/casetest/CaseTestResults";
 import XPReward from "../components/gamification/XPReward";
 import { calculateLevelInfo } from "../components/gamification/GamificationProfile";
-import { API_KEYS } from "@/components/config/apiKeys";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getAufklaerungDetails } from "../components/aufklaerung/data.jsx";
 
@@ -52,14 +50,15 @@ const PermissionDenied = ({ onRetry }) => (
 
 export default function AufklaerungTest() {
   const navigate = useNavigate();
+  const { user: authUser, isAuthenticated } = useAuth();
   const [caseItem, setCaseItem] = useState(null);
   const [caseDetails, setCaseDetails] = useState({ script: "", questions: [] });
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [permissionError, setPermissionError] = useState(false); // New state for permission error
+  const [permissionError, setPermissionError] = useState(false);
   
-  const [phase, setPhase] = useState('setup'); // 'setup', 'prep', 'recording', 'processing', 'finished'
+  const [phase, setPhase] = useState('setup');
   const [timer, setTimer] = useState(0);
   const [assessment, setAssessment] = useState(null);
   const [showXPReward, setShowXPReward] = useState(false);
@@ -123,10 +122,12 @@ export default function AufklaerungTest() {
     try {
       setIsLoading(true);
       if (!caseId) throw new Error("Keine Fall-ID");
+      
       const [caseData, userData] = await Promise.all([
         InformedConsentCase.get(caseId), 
         User.me()
       ]);
+      
       setCaseItem(caseData);
       setCaseDetails(getAufklaerungDetails(caseData.title));
       setUser(userData);

@@ -1,14 +1,10 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 
 export default function QuickStats({ title, value, icon: Icon, bgColor, subtitle }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div>
       <Card className="relative overflow-hidden shadow-lg border-0 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm hover:shadow-xl transition-all duration-300">
         <div className={`absolute top-0 right-0 w-24 h-24 bg-gradient-to-br ${bgColor} opacity-10 rounded-full transform translate-x-6 -translate-y-6`} />
         <CardContent className="p-6 relative">
@@ -26,6 +22,6 @@ export default function QuickStats({ title, value, icon: Icon, bgColor, subtitle
           </div>
         </CardContent>
       </Card>
-    </motion.div>
+    </div>
   );
 }

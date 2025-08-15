@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
 import { Flashcard, User, UserFlashcardMastery } from "@/api/entities";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -32,6 +33,7 @@ const systemDecks = [
 
 export default function Flashcards() {
   const navigate = useNavigate();
+  const { user: authUser, isAuthenticated } = useAuth();
   const [flashcards, setFlashcards] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
@@ -50,18 +52,23 @@ export default function Flashcards() {
   const [showXPReward, setShowXPReward] = useState(false);
 
   useEffect(() => {
-    User.me().then(user => {
+    if (isAuthenticated && authUser) {
+      User.me().then(user => {
         setUser(user);
         const effectiveType = getEffectiveAccountType(user);
         const limits = LIMITS[effectiveType];
         if (!limits.flashcardsEnabled) {
-            setShowUpgradePrompt(true);
+          setShowUpgradePrompt(true);
         }
-    }).catch(() => {
+      }).catch(() => {
         setUser(null);
-        setShowUpgradePrompt(true); // Also show for guests
-    });
-  }, []);
+        setShowUpgradePrompt(true);
+      });
+    } else {
+      setUser(null);
+      setShowUpgradePrompt(true);
+    }
+  }, [authUser, isAuthenticated]);
 
   useEffect(() => {
     if (selectedDeck) {
@@ -190,7 +197,7 @@ export default function Flashcards() {
       english_translation: 'Sample card',
       deck: newDeckName,
       category: 'vocabulary',
-      mastery_level: 0, // This mastery_level on Flashcard is now ignored for user progress
+      mastery_level: 0,
       created_by: user.email
     });
     
@@ -243,6 +250,8 @@ export default function Flashcards() {
         setFlashcards(updatedFlashcards);
         setStudiedCards(prev => prev + 1);
 
+        console.log(`Updated mastery for card ${cardId} to level ${level}`);
+
         // Auto-advance after rating
         setTimeout(() => {
           handleNextCard();
@@ -262,7 +271,7 @@ export default function Flashcards() {
     const newXP = (user.xp || 0) + xpGained;
     const newLevel = calculateLevelInfo(newXP).level;
     
-    // Update user XP
+    // Update user XP using real API
     await User.updateMyUserData({
       xp: newXP,
       level: newLevel,
@@ -321,9 +330,8 @@ export default function Flashcards() {
     try {
       await Flashcard.delete(cardId);
       // Also delete associated mastery records if card is deleted
-      await UserFlashcardMastery.filter({ flashcard_id: cardId }).then(masteryRecords => {
-        masteryRecords.forEach(record => UserFlashcardMastery.delete(record.id));
-      });
+      const masteryRecords = await UserFlashcardMastery.filter({ flashcard_id: cardId });
+      masteryRecords.forEach(record => UserFlashcardMastery.delete(record.id));
 
       if (selectedDeck) {
         loadFlashcards(selectedDeck);

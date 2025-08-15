@@ -14,7 +14,9 @@ import {
   ArrowRight,
   BookCheck,
   CheckCircle,
-  Trophy
+  Trophy,
+  Home,
+  Stethoscope
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -25,9 +27,9 @@ import { getEffectiveAccountType, getDaysRemaining, PLAN_NAMES } from "@/compone
 
 import QuickStats from "../components/dashboard/QuickStats";
 import RecentAssessments from "../components/dashboard/RecentAssessments";
-import WeeklyProgress from "../components/dashboard/WeeklyProgress";
-import LevelProgressCard from "../components/dashboard/LevelProgressCard";
 import Leaderboard from "../components/dashboard/Leaderboard";
+import LevelProgressCard from "../components/dashboard/LevelProgressCard";
+import WeeklyProgress from "../components/dashboard/WeeklyProgress";
 
 const guestData = {
   assessments: [
@@ -65,20 +67,38 @@ export default function Dashboard() {
     setIsLoading(true);
     try {
       if (isAuthenticated && authUser) {
-        // Use our custom auth user instead of Base44
-        setUser(authUser);
+        // Use real API calls now
+        const userData = await User.me();
+        setUser(userData);
         
-        // Load user-specific data - using demo data for now
-        // You can replace this with real API calls later
+        // Load user's real data
+        const [userAssessments, userFlashcards, userAssignments, userSubmissions] = await Promise.all([
+          SpeechAssessment.filter({ created_by: userData.email }, "-created_date"),
+          Flashcard.filter({ created_by: userData.email }, "-created_date"), 
+          Assignment.filter({ assigned_to: userData.email }),
+          Submission.filter({ submitted_by: userData.email })
+        ]);
+        
+        setAssessments(userAssessments);
+        setFlashcards(userFlashcards);
+        setAssignments(userAssignments);
+        setSubmissions(userSubmissions);
+      } else {
+        setUser(null);
+        // Use guest data for non-authenticated users
         setAssessments(guestData.assessments);
         setFlashcards(guestData.flashcards);
         setAssignments([]);
         setSubmissions([]);
-      } else {
-        setUser(null);
       }
     } catch (error) {
+      console.error("Error loading dashboard data:", error);
+      // Fallback to guest data on error
       setUser(null);
+      setAssessments(guestData.assessments);
+      setFlashcards(guestData.flashcards);
+      setAssignments([]);
+      setSubmissions([]);
     }
     setIsLoading(false);
   };
@@ -148,17 +168,53 @@ export default function Dashboard() {
 
   // --- Authenticated User Dashboard ---
   return (
-    <div className="min-h-screen bg-transparent p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            Willkommen zurück! 👋
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 text-lg">
-            Bereit für Ihre nächste Deutsch-Sprechübung?
-          </p>
+    <div className="flex min-h-screen bg-gray-50">
+      {/* LEFT SIDEBAR */}
+      <div className="w-64 bg-white shadow-lg border-r">
+        <div className="p-4">
+          <h2 className="text-xl font-bold text-green-700">FAMED Test Prep</h2>
         </div>
+        
+                <nav className="mt-4">
+          <Link to="/dashboard" className="flex items-center px-4 py-3 mx-2 rounded-lg bg-green-100 text-green-700 font-medium">
+            <Home className="w-5 h-5 mr-3" />
+            Dashboard
+          </Link>
+          <Link to="/flashcards" className="flex items-center px-4 py-3 mx-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900">
+            <CreditCard className="w-5 h-5 mr-3" />
+            Flashcards
+          </Link>
+          <Link to="/upgrade" className="flex items-center px-4 py-3 mx-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900">
+            <TrendingUp className="w-5 h-5 mr-3" />
+            Upgrade
+          </Link>
+          <Link to="/aufklaerung" className="flex items-center px-4 py-3 mx-2 rounded-lg text-gray-600 hover:bg-gray-100 hover:text-gray-900">
+            <BookOpen className="w-5 h-5 mr-3" />
+            Aufklaerung
+          </Link>
+          
+          <button
+            onClick={() => {logout(); window.location.href = '/';}}
+            className="flex items-center w-full px-4 py-3 mx-2 mt-4 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+          >
+            <Award className="w-5 h-5 mr-3" />
+            Logout
+          </button>
+        </nav>
+      </div>
+      
+      {/* MAIN CONTENT */}
+      <div className="flex-1 p-6">
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
+              Willkommen zurück! 👋
+            </h1>
+            <p className="text-gray-600 dark:text-gray-300 text-lg">
+              Bereit für Ihre nächste Deutsch-Sprechübung?
+            </p>
+          </div>
 
         {/* Assignments Card */}
         {assignments.length > 0 && (
@@ -261,7 +317,7 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* Sidebar */}
+          {/* Right Sidebar */}
           <div className="space-y-6">
             <Leaderboard />
             <Link to={createPageUrl("Progress")}>
@@ -315,6 +371,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </div>
+        </div>
         </div>
       </div>
     </div>
