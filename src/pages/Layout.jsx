@@ -40,9 +40,9 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import GamificationProfile from './components/gamification/GamificationProfile';
+import GamificationProfile from '@/components/gamification/GamificationProfile';
 import { getEffectiveAccountType, getDaysRemaining, PLAN_NAMES } from "@/components/utils/subscriptionLimits";
-import FloatingAssistant from './components/assistant/FloatingAssistant';
+import FloatingAssistant from '@/components/assistant/FloatingAssistant';
 
 // SEO Helper
 const updateMetaTags = (tags) => {
