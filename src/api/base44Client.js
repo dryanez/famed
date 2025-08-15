@@ -5,7 +5,5 @@ import { createClient } from '@base44/sdk';
 export const base44 = createClient({
   appId: "687e890e3a2296d07bac8718", 
   requiresAuth: true, // Ensure authentication is required for all operations
-  callbackUrl: window.location.hostname === 'localhost' 
-    ? window.location.origin 
-    : 'https://famedtestprep.com'
+  callbackUrl: window.location.origin // Use current domain dynamically
 });
