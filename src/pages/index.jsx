@@ -1,7 +1,7 @@
 
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Layout from "../Layout";
+import Layout from "./Layout"
 import Dashboard from "./Dashboard";
 import Practice from "./Practice";
 import Progress from "./Progress";
